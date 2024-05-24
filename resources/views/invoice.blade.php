@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Invoice</title>
+    <title>Invoice {{ $invoice->project->client->name }}</title>
 
     <!-- Favicon -->
     <link rel="icon" href="./images/favicon.png" type="image/x-icon" />

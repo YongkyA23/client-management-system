@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a9c8464c1ac2632fca50300271396eb",
+    "content-hash": "25dfd358b657a7294f798e3bb49bae84",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2099,6 +2099,80 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "joaopaulolndev/filament-edit-profile",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joaopaulolndev/filament-edit-profile.git",
+                "reference": "a093100249fee04e0afb5946ea6fb2449365bfc4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joaopaulolndev/filament-edit-profile/zipball/a093100249fee04e0afb5946ea6fb2449365bfc4",
+                "reference": "a093100249fee04e0afb5946ea6fb2449365bfc4",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.9",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.1",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Joaopaulolndev\\FilamentEditProfile\\FilamentEditProfileServiceProvider"
+                    ],
+                    "aliases": {
+                        "FilamentEditProfile": "Joaopaulolndev\\FilamentEditProfile\\Facades\\FilamentEditProfile"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joaopaulolndev\\FilamentEditProfile\\": "src/",
+                    "Joaopaulolndev\\FilamentEditProfile\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "João Paulo Leite Nascimento",
+                    "email": "joaopauloln7@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament package to edit profile",
+            "homepage": "https://github.com/joaopaulolndev/filament-edit-profile",
+            "keywords": [
+                "filament-edit-profile",
+                "joaopaulolndev",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/joaopaulolndev/filament-edit-profile/issues",
+                "source": "https://github.com/joaopaulolndev/filament-edit-profile"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/joaopaulolndev",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-23T18:18:16+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
