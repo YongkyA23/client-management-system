@@ -1,3 +1,4 @@
 {
-    "php.version": "8.3"
+    "php.version": "8.3",
+    "search.useIgnoreFiles": false
 }

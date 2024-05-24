@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,7 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class InvoiceResource extends Resource
+class InvoiceResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Invoice::class;
 
@@ -21,6 +22,19 @@ class InvoiceResource extends Resource
 
     protected static ?string $navigationGroup = "Projects";
     protected static ?int $navigationSort = 3;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -36,11 +50,12 @@ class InvoiceResource extends Resource
                                 Forms\Components\TextInput::make('title')
                                     ->required()
                                     ->maxLength(255),
-                                Forms\Components\RichEditor::make('detail')
+                                Forms\Components\Textarea::make('detail')
                                     ->columnSpanFull(),
                                 Forms\Components\TextInput::make('total')
                                     ->required()
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->prefix('IDR'),
 
                             ]),
                         Forms\Components\Section::make('Notes')
@@ -78,7 +93,7 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('total')
-                    ->numeric()
+                    ->money('IDR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->date()
@@ -102,6 +117,11 @@ class InvoiceResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('Generate invoice')
+                    ->label("Generate Invoice")
+                    ->icon("heroicon-c-document-text")
+                    ->url(fn (Invoice $record) => route('download.pdf', $record))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

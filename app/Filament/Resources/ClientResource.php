@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Filament\Resources\ClientResource\RelationManagers;
 use App\Models\Client;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,7 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClientResource extends Resource
+class ClientResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Client::class;
 
@@ -22,6 +23,18 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = "Projects";
     protected static ?int $navigationSort = 1;
 
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -32,7 +45,7 @@ class ClientResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\RichEditor::make('description')
+                        Forms\Components\Textarea::make('description')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
                             ->required()
@@ -42,7 +55,7 @@ class ClientResource extends Resource
                             ->required()
                             ->email()
                             ->maxLength(255),
-                        Forms\Components\RichEditor::make('address')
+                        Forms\Components\Textarea::make('address')
                             ->required()
                             ->maxLength(255),
                     ])

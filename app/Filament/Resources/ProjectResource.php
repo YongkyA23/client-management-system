@@ -13,7 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProjectResource extends Resource
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+
+class ProjectResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Project::class;
 
@@ -21,6 +23,20 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationGroup = "Projects";
     protected static ?int $navigationSort = 2;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,7 +54,7 @@ class ProjectResource extends Resource
                                     ->relationship(name: 'client', titleAttribute: 'name')
                                     ->loadingMessage('Loading clients...')
                                     ->noSearchResultsMessage('No clients found.'),
-                                Forms\Components\RichEditor::make('description')
+                                Forms\Components\Textarea::make('description')
                                     ->columnSpanFull(),
                             ]),
                         Forms\Components\Section::make('Price')
