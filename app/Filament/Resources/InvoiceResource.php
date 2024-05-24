@@ -133,7 +133,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\InvoiceDetailsRelationManager::class,
         ];
     }
 

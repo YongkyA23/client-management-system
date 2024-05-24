@@ -200,17 +200,26 @@
 
                 <td>Price</td>
             </tr>
+            @php
+                $total = 0;
+            @endphp
 
-            <tr class="item">
-                <td>{{ $invoice->title }}</td>
+            @foreach ($invoice->invoice_details as $detail)
+                <tr class="item">
+                    <td>{{ $detail->service_name }}</td>
 
-                <td> Rp. {{ number_format($invoice->project->price, 2, ',', '.') }} </td>
-            </tr>
+                    <td> Rp. {{ number_format($detail->service_price, 2, ',', '.') }} </td>
+                </tr>
+                @php
+                    $total += $detail->service_price;
+                @endphp
+            @endforeach
+
 
             <tr class="total">
                 <td></td>
 
-                <td>Total: Rp. {{ number_format($invoice->total, 2, ',', '.') }} </td>
+                <td>Total: Rp. {{ number_format($total, 2, ',', '.') }} </td>
             </tr>
         </table>
         <div class="paid-status {{ $invoice->paid_date ? 'paid' : 'not-paid' }}"

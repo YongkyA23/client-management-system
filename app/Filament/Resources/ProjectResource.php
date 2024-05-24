@@ -51,9 +51,7 @@ class ProjectResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Select::make('client_id')
                                     ->required()
                                     ->searchable()
-                                    ->relationship(name: 'client', titleAttribute: 'name')
-                                    ->loadingMessage('Loading clients...')
-                                    ->noSearchResultsMessage('No clients found.'),
+                                    ->relationship(name: 'client', titleAttribute: 'name'),
                                 Forms\Components\Textarea::make('description')
                                     ->columnSpanFull(),
                             ]),
