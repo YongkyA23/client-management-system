@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Schema::dropIfExists('invoice_details');
         Schema::create('invoice_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnDelete();
-            $table->string('service_name');
+            $table->foreignId('service_category_id')->constrained('service_categories')->cascadeOnDelete();
+            $table->string('name');
+            $table->integer('price');
             $table->integer('quantity');
-            $table->integer('service_price');
             $table->integer('total_price');
             $table->timestamps();
         });

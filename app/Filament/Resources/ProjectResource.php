@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Models\Client;
 use App\Models\Project;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -51,17 +52,17 @@ class ProjectResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Select::make('client_id')
                                     ->required()
                                     ->searchable()
-                                    ->relationship(name: 'client', titleAttribute: 'name'),
-                                Forms\Components\Textarea::make('description')
+                                    ->label('Client Name')
+                                    ->options(Client::all()->pluck('name', 'id')),
+                                Forms\Components\Textarea::make('notes')
                                     ->columnSpanFull(),
-                            ]),
-                        Forms\Components\Section::make('Price')
-                            ->schema([
                                 Forms\Components\TextInput::make('price')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR'),
+
                             ]),
+
                     ]),
                 Forms\Components\Group::make()
                     ->schema([

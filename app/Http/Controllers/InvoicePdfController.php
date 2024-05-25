@@ -21,4 +21,17 @@ class InvoicePdfController extends Controller
 
         return $pdf->stream('invoice.pdf');
     }
+
+    public function quatationpdf($id)
+    {
+        $invoice = Invoice::find($id);
+
+        $data = [
+            'invoice' => $invoice
+        ];
+
+        $pdf = PDF::loadView('quatation', $data);
+
+        return $pdf->stream('invoice.pdf');
+    }
 }

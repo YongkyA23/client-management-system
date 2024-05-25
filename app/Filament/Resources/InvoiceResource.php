@@ -5,8 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
+use App\Models\Project;
+use App\Models\ServiceCategory;
+use App\Models\services;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,6 +27,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = "Projects";
     protected static ?int $navigationSort = 3;
+    protected static ?string $modelLabel = 'Invoice and Quotations';
 
     public static function getPermissionPrefixes(): array
     {
@@ -35,6 +41,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
             'publish'
         ];
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -44,26 +51,40 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                         Forms\Components\Section::make('Details')
                             ->schema([
                                 Forms\Components\Select::make('project_id')
+                                    ->label('Project Name')
                                     ->required()
                                     ->searchable()
-                                    ->relationship(name: 'project', titleAttribute: 'name'),
+                                    ->options(Project::all()->pluck('name', 'id')),
                                 Forms\Components\TextInput::make('title')
                                     ->required()
+                                    ->label('Invoice Title')
                                     ->maxLength(255),
-                                Forms\Components\Textarea::make('detail')
-                                    ->columnSpanFull(),
-                                Forms\Components\TextInput::make('total')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('IDR'),
-
+                                Forms\Components\Section::make('Price')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('total')
+                                            ->required()
+                                            ->numeric()
+                                            ->disabled()
+                                            ->dehydrated(true)
+                                            ->prefix('IDR')
+                                            ->default(0),
+                                        Forms\Components\TextInput::make('tax')
+                                            ->required()
+                                            ->numeric()
+                                            ->dehydrated(false)
+                                            ->suffix('%')
+                                            ->reactive()
+                                            ->default(0)
+                                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                                $totalSum = collect($get('invoice_details'))->sum('total_price');
+                                                if ($state !== null) {
+                                                    $totalWithTax = $totalSum + ($totalSum * $state / 100);
+                                                    $set('total', $totalWithTax);
+                                                }
+                                            }),
+                                    ])->columnSpanFull()
+                                    ->columns(2),
                             ]),
-                        Forms\Components\Section::make('Notes')
-                            ->schema([
-                                Forms\Components\TextInput::make('notes')
-                                    ->maxLength(255),
-                            ]),
-
                     ]),
                 Forms\Components\Group::make()
                     ->schema([
@@ -74,10 +95,96 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                 Forms\Components\DatePicker::make('due_date')
                                     ->required(),
                                 Forms\Components\DatePicker::make('paid_date'),
-                            ]),
+                            ])->columns('3'),
+                        Forms\Components\Section::make('Notes')
+                            ->schema([
+                                Forms\Components\Textarea::make('notes')
+                            ])
+                    ]),
+                Forms\Components\Section::make('Items')
+                    ->schema([
+                        Repeater::make('invoice_details')
+                            ->relationship()
+                            ->schema([
+                                Select::make('service_category_id')
+                                    ->required()
+                                    ->searchable()
+                                    ->label('Service Category')
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->required(),
+                                    ])
+                                    ->createOptionUsing(function ($data) {
+                                        return ServiceCategory::create($data)->id;
+                                    })
+                                    ->columnSpan(4)
+                                    ->options(ServiceCategory::all()->pluck('name', 'id')),
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->columnSpan(4)
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('quantity')
+                                    ->numeric()
+                                    ->default(1)
+                                    ->required()
+                                    ->reactive()
+                                    ->columnSpan(1)
+                                    ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                        $price = $get('price');
+                                        $set('total_price', $state * $price);
+                                    }),
+                                Forms\Components\TextInput::make('price')
+                                    ->numeric()
+                                    ->prefix('IDR')
+                                    ->required()
+                                    ->default(0)
+                                    ->reactive()
+                                    ->columnSpan(3)
+                                    ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                        $quantity = $get('quantity');
+                                        $set('total_price', $state * $quantity);
+                                    }),
+                                Forms\Components\TextInput::make('total_price')
+                                    ->label('Total Price')
+                                    ->numeric()
+                                    ->disabled()
+                                    ->default(0)
+                                    ->columnSpan(3)
+                                    ->prefix('IDR')
+                                    ->required(),
+                            ])->columnSpanFull()
+                            ->columns(15)
+                            ->addActionLabel('Add More Items')
+                            ->defaultItems(1)
+                            ->reorderable(true)
+                            ->reorderableWithButtons()
+                            ->cloneable()
+
+
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                // Calculate the total sum of total_price fields
+                                $totalSum = collect($state)->sum('total_price');
+                                $set('total', $totalSum);
+
+                                // Apply tax if tax field is set
+                                $tax = $get('tax');
+                                if ($tax !== null) {
+                                    $totalWithTax = $totalSum + ($totalSum * $tax / 100);
+                                    $set('total', $totalWithTax);
+                                }
+                            })
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
             ]);
     }
+
+    // protected static function updateTotal(callable $get, callable $set): void
+    // {
+    //     $totalSum = collect($get('invoice_details'))->sum('total_price');
+    //     $tax = $get('tax');
+    //     $totalWithTax = $totalSum + ($totalSum * $tax / 100);
+    //     $set('total', $totalWithTax);
+    // }
 
     public static function table(Table $table): Table
     {
@@ -92,16 +199,15 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('total')
-                    ->money('IDR')
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('total')
+                //     ->money('IDR')
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->date()
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -118,9 +224,14 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('Generate invoice')
-                    ->label("Generate Invoice")
+                    ->label("Invoice")
                     ->icon("heroicon-c-document-text")
-                    ->url(fn (Invoice $record) => route('download.pdf', $record))
+                    ->url(fn (Invoice $record) => route('invoice.pdf', $record))
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('Generate Quatation')
+                    ->label("Quotation")
+                    ->icon("heroicon-c-document-text")
+                    ->url(fn (Invoice $record) => route('quotation.pdf', $record))
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([
@@ -133,7 +244,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            RelationManagers\InvoiceDetailsRelationManager::class,
+            //RelationManagers\InvoiceDetailsRelationManager::class,
         ];
     }
 

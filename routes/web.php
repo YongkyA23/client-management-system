@@ -8,4 +8,5 @@ Route::get('/', function () {
     return redirect(Filament::getUrl());
 });
 
-Route::get('download/{id}', [InvoicePdfController::class, 'invoicepdf'])->name("download.pdf");
+Route::get('download/invoice/{id}', [InvoicePdfController::class, 'invoicepdf'])->name("invoice.pdf");
+Route::get('download/quotation/{id}', [InvoicePdfController::class, 'quatationpdf'])->name("quotation.pdf");

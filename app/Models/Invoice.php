@@ -12,7 +12,6 @@ class Invoice extends Model
     protected $fillable = [
         'project_id',
         'title',
-        'detail',
         'notes',
         'total',
         'issue_date',
@@ -27,8 +26,9 @@ class Invoice extends Model
 
     public function invoice_details(): HasMany
     {
-        return $this->hasMany(invoice_details::class);
+        return $this->hasMany(InvoiceDetail::class);
     }
+
 
     use HasFactory;
 }
