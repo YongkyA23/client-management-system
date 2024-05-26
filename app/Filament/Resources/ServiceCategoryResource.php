@@ -25,13 +25,28 @@ class ServiceCategoryResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Service Category')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                    ])->columnSpan(1),
             ]);
     }
 
@@ -75,6 +90,7 @@ class ServiceCategoryResource extends Resource
         return [
             'index' => Pages\ListServiceCategories::route('/'),
             'create' => Pages\CreateServiceCategory::route('/create'),
+            'activities' => Pages\ListServiceCategoryActivities::route('/{record}/activities'),
             'edit' => Pages\EditServiceCategory::route('/{record}/edit'),
         ];
     }

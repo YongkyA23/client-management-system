@@ -6,14 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Invoice extends Model
 {
+    use HasFactory, LogsActivity;
     protected $fillable = [
         'project_id',
         'title',
         'notes',
         'total',
+        'tax_percent',
         'issue_date',
         'due_date',
         'paid_date',
@@ -29,6 +33,9 @@ class Invoice extends Model
         return $this->hasMany(InvoiceDetail::class);
     }
 
-
-    use HasFactory;
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnlyDirty();
+    }
 }

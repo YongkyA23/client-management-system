@@ -45,8 +45,7 @@ class ClientResource extends Resource implements HasShieldPermissions
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Textarea::make('description')
-                            ->maxLength(255),
+
                         Forms\Components\TextInput::make('phone')
                             ->required()
                             ->tel()
@@ -58,7 +57,9 @@ class ClientResource extends Resource implements HasShieldPermissions
                         Forms\Components\Textarea::make('address')
                             ->required()
                             ->maxLength(255),
-                    ])
+                        Forms\Components\Textarea::make('description')
+                            ->maxLength(255),
+                    ])->columns(2),
 
             ]);
     }
@@ -112,6 +113,7 @@ class ClientResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListClients::route('/'),
             'create' => Pages\CreateClient::route('/create'),
+            'activities' => Pages\ListClientActivities::route('/{record}/activities'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
         ];
     }

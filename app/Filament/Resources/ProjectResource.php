@@ -13,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
@@ -66,7 +68,8 @@ class ProjectResource extends Resource implements HasShieldPermissions
                                 Forms\Components\DatePicker::make('start_date')
                                     ->required(),
                                 Forms\Components\DatePicker::make('end_date')
-                                    ->required(),
+                                    ->required()
+                                    ->afterOrEqual('start_date'),
                             ])->columnSpanFull()
                             ->columns(2),
                     ]),
@@ -124,6 +127,7 @@ class ProjectResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
+            'activities' => Pages\ListProjectActivities::route('/{record}/activities'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
     }

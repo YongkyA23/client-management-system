@@ -25,7 +25,7 @@ class UserResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationGroup = "Admin";
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 7;
 
     public static function getPermissionPrefixes(): array
     {
@@ -115,6 +115,7 @@ class UserResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
+            'activities' => Pages\ListUserActivities::route('/{record}/activities'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }

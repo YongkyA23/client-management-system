@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Validation\ValidationException;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
@@ -54,7 +57,16 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                     ->label('Project Name')
                                     ->required()
                                     ->searchable()
-                                    ->options(Project::all()->pluck('name', 'id')),
+                                    ->options(Project::all()->pluck('name', 'id'))
+                                    ->afterStateUpdated(
+                                        function ($state, callable $get, callable $set) {
+                                            $project = Project::find($state);
+                                            if ($project) {
+                                                $set('project_date', $project->start_date);
+                                            }
+                                        }
+                                    )
+                                    ->reactive(),
                                 Forms\Components\TextInput::make('title')
                                     ->required()
                                     ->label('Invoice Title')
@@ -71,7 +83,6 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                         Forms\Components\TextInput::make('tax_percent')
                                             ->required()
                                             ->numeric()
-                                            ->dehydrated(false)
                                             ->suffix('%')
                                             ->reactive()
                                             ->default(0)
@@ -91,10 +102,17 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                         Forms\Components\Section::make('Date')
                             ->schema([
                                 Forms\Components\DatePicker::make('issue_date')
-                                    ->required(),
+                                    ->required()
+                                    ->afterOrEqual(fn (callable $get) => $get('project_date')),
                                 Forms\Components\DatePicker::make('due_date')
-                                    ->required(),
-                                Forms\Components\DatePicker::make('paid_date'),
+                                    ->required()
+                                    ->afterOrEqual('issue_date'),
+                                Forms\Components\DatePicker::make('paid_date')
+                                    ->nullable()
+                                    ->afterOrEqual('issue_date'),
+                                Forms\Components\DatePicker::make('project_date')
+                                    ->hidden()
+                                    ->dehydrated(false)
                             ])->columns('3'),
                         Forms\Components\Section::make('Notes')
                             ->schema([
@@ -170,7 +188,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                 }
                             })
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
-                    ]),
+                    ])->collapsible(),
             ]);
     }
 
@@ -241,6 +259,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListInvoices::route('/'),
             'create' => Pages\CreateInvoice::route('/create'),
+            'activities' => Pages\ListInvoiceActivities::route('/{record}/activities'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
     }

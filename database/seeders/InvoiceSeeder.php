@@ -20,6 +20,15 @@ class InvoiceSeeder extends Seeder
         // Get all project IDs to assign invoices to them
         $projectIds = Project::pluck('id')->toArray();
 
+        // Generate issue date
+        $issueDate = $faker->dateTimeBetween('-1 year', 'now');
+
+        // Generate due date after issue date
+        $dueDate = $faker->dateTimeBetween($issueDate, '+1 year');
+
+        // Generate paid date between issue date and due date
+        $paidDate = $faker->optional(0.8, null)->dateTimeBetween($issueDate, $dueDate);
+
         foreach (range(1, 50) as $index) {
             Invoice::create([
                 'project_id' => $faker->randomElement($projectIds),
@@ -27,9 +36,9 @@ class InvoiceSeeder extends Seeder
                 'notes' => $faker->paragraph,
                 'total' => 0, // Placeholder, will be updated later
                 'tax_percent' => 11,
-                'issue_date' => $faker->date,
-                'due_date' => $faker->date,
-                'paid_date' => $faker->optional()->date,
+                'issue_date' => $issueDate,
+                'due_date' => $dueDate,
+                'paid_date' => $paidDate,
             ]);
         }
     }

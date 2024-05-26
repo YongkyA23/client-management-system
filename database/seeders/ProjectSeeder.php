@@ -18,6 +18,11 @@ class ProjectSeeder extends Seeder
         $faker = Faker::create();
 
         // Get all client IDs to assign projects to them
+        $startDate = $faker->dateTimeBetween('-1 year', 'now');
+
+        // Generate due date after issue date
+        $endDate = $faker->dateTimeBetween($startDate, '+1 year');
+
         $clientIds = Client::pluck('id')->toArray();
 
         foreach (range(1, 50) as $index) {
@@ -25,8 +30,8 @@ class ProjectSeeder extends Seeder
                 'name' => $faker->company,
                 'client_id' => $faker->randomElement($clientIds),
                 'notes' => $faker->optional()->paragraph,
-                'start_date' => $faker->date,
-                'end_date' => $faker->date,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
             ]);
         }
     }
