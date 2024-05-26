@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('notes')->nullable();
             $table->integer('total');
+            $table->integer('tax_percent');
             $table->date('issue_date');
             $table->date('due_date');
             $table->date('paid_date')->nullable()->default(null);

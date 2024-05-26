@@ -56,11 +56,6 @@ class ProjectResource extends Resource implements HasShieldPermissions
                                     ->options(Client::all()->pluck('name', 'id')),
                                 Forms\Components\Textarea::make('notes')
                                     ->columnSpanFull(),
-                                Forms\Components\TextInput::make('price')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('IDR'),
-
                             ]),
 
                     ]),
@@ -72,8 +67,9 @@ class ProjectResource extends Resource implements HasShieldPermissions
                                     ->required(),
                                 Forms\Components\DatePicker::make('end_date')
                                     ->required(),
-                            ])
-                    ])
+                            ])->columnSpanFull()
+                            ->columns(2),
+                    ]),
             ]);
     }
 
@@ -82,12 +78,10 @@ class ProjectResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Project Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('client.name')
                     ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money('IDR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()

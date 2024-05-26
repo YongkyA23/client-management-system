@@ -68,7 +68,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                             ->dehydrated(true)
                                             ->prefix('IDR')
                                             ->default(0),
-                                        Forms\Components\TextInput::make('tax')
+                                        Forms\Components\TextInput::make('tax_percent')
                                             ->required()
                                             ->numeric()
                                             ->dehydrated(false)
@@ -159,15 +159,11 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                             ->reorderable(true)
                             ->reorderableWithButtons()
                             ->cloneable()
-
-
                             ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                                // Calculate the total sum of total_price fields
                                 $totalSum = collect($state)->sum('total_price');
                                 $set('total', $totalSum);
 
-                                // Apply tax if tax field is set
-                                $tax = $get('tax');
+                                $tax = $get('tax_percent');
                                 if ($tax !== null) {
                                     $totalWithTax = $totalSum + ($totalSum * $tax / 100);
                                     $set('total', $totalWithTax);
@@ -178,30 +174,22 @@ class InvoiceResource extends Resource implements HasShieldPermissions
             ]);
     }
 
-    // protected static function updateTotal(callable $get, callable $set): void
-    // {
-    //     $totalSum = collect($get('invoice_details'))->sum('total_price');
-    //     $tax = $get('tax');
-    //     $totalWithTax = $totalSum + ($totalSum * $tax / 100);
-    //     $set('total', $totalWithTax);
-    // }
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\IconColumn::make('paid_date')
                     ->boolean()
+                    ->default(false)
                     ->label('Paid'),
                 Tables\Columns\TextColumn::make('project.client.name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('project.name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('total')
-                //     ->money('IDR')
-                //     ->sortable(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->date()
                     ->sortable(),
