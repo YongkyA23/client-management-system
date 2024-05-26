@@ -19,6 +19,8 @@ class InvoiceDetailSeeder extends Seeder
         $faker = Faker::create();
         $invoiceIds = Invoice::pluck('id')->toArray();
         $serviceCategoryIds = ServiceCategory::pluck('id')->toArray();
+        // Update the total of the invoice
+
 
         foreach ($invoiceIds as $invoiceId) {
             $total = 0;
@@ -39,10 +41,17 @@ class InvoiceDetailSeeder extends Seeder
 
                 $total += $totalPrice;
             }
-
-            // Update the total of the invoice
             $invoice = Invoice::find($invoiceId);
-            $invoice->total = $total;
+            $taxPercent = $invoice->tax_percent;
+
+            // Calculate the tax amount
+            $taxAmount = $total * $taxPercent / 100;
+
+            // Calculate the total after tax
+            $totalAfterTax = $total + $taxAmount;
+
+            $invoice->total = $totalAfterTax;
+
             $invoice->save();
         }
     }

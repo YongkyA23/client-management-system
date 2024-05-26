@@ -117,6 +117,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                         Forms\Components\Section::make('Notes')
                             ->schema([
                                 Forms\Components\Textarea::make('notes')
+                                    ->rows(5),
                             ])
                     ]),
                 Forms\Components\Section::make('Items')

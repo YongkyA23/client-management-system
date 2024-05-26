@@ -22,7 +22,7 @@ class InvoicePdfController extends Controller
         return $pdf->stream('invoice.pdf');
     }
 
-    public function quatationpdf($id)
+    public function quotationpdf($id)
     {
         $invoice = Invoice::find($id);
 
@@ -30,7 +30,7 @@ class InvoicePdfController extends Controller
             'invoice' => $invoice
         ];
 
-        $pdf = PDF::loadView('quatation', $data);
+        $pdf = PDF::loadView('quotation', $data);
 
         return $pdf->stream('invoice.pdf');
     }

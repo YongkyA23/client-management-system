@@ -9,4 +9,4 @@ Route::get('/', function () {
 });
 
 Route::get('download/invoice/{id}', [InvoicePdfController::class, 'invoicepdf'])->name("invoice.pdf");
-Route::get('download/quotation/{id}', [InvoicePdfController::class, 'quatationpdf'])->name("quotation.pdf");
+Route::get('download/quotation/{id}', [InvoicePdfController::class, 'quotationpdf'])->name("quotation.pdf");

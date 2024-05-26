@@ -22,6 +22,16 @@ class InvoiceDetail extends Model
         'total_price',
     ];
 
+    public function service_category(): BelongsTo
+    {
+        return $this->belongsTo(ServiceCategory::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
     // Automatically calculate total_price before saving the model
     protected static function booted()
     {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Invoice for {{ $invoice->project->client->name }}</title>
+    <title>Quotation for {{ $invoice->project->client->name }}</title>
     <style>
         * {
             font-family: "Calibri", sans-serif;
@@ -48,7 +48,6 @@
         .notes {
             margin-top: 10px;
             font-size: smaller;
-
         }
 
         .notes ol {
@@ -88,7 +87,7 @@
         <img src="images/logo.png" alt="Company Logo" width="150" />
     </div>
 
-    <h4 class="title">INVOICE</h4>
+    <h4 class="title">QUOTATION</h4>
 
     <div class="project-details">
         <strong>Nbr.</strong> : {{ $invoice->id }}<br />
@@ -225,9 +224,29 @@
 
     <div class="notes">
         <strong>Note:</strong>
-        <div style="line-height: 1.5; margin-bottom: 15px;">
-            {!! nl2br(e($invoice->notes)) !!}
-        </div>
+        <ol>
+            <li>
+                This is an estimate only and may be subject to plus or minus
+                variations upon revisions attributed to client during final
+                production.
+            </li>
+            <li>
+                This estimate does not reflect subsequent revisions to colour
+                separations/film. Should revisions be required, they will be estimated
+                for on a supplementary revised estimate, as and when they occur.
+            </li>
+            <li>Maximum 3x Revision for Each SKU</li>
+            <li>Additional cost will be changed if there's Revision after FA.</li>
+            <li>Payment should be paid within 6 weeks after invoice.</li>
+            <li>
+                The payment should be transferred to:
+                <p>
+                    PT. Hantam Kreasi Utama<br />
+                    Bank MANDIRI - Cab. Mal Pondok Indah<br />
+                    Acc. No. 101-00-0677696-5
+                </p>
+            </li>
+        </ol>
     </div>
 </body>
 

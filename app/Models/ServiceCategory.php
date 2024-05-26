@@ -15,6 +15,10 @@ class ServiceCategory extends Model
     use HasFactory, LogsActivity;
     protected $fillable = ['name'];
 
+    public function InvoiceDetail(): HasMany
+    {
+        return $this->hasMany(InvoiceDetail::class);
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
