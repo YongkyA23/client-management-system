@@ -33,7 +33,7 @@
         }
 
         .bottomInfo {
-            padding: 5px;
+            padding: 8px;
         }
 
         th {
