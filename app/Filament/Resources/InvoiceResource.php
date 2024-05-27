@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\ServiceCategory;
 use App\Models\services;
+use App\Models\User;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
@@ -21,6 +22,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Spatie\Permission\Models\Role;
 
 class InvoiceResource extends Resource implements HasShieldPermissions
 {
@@ -53,6 +55,10 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Forms\Components\Section::make('Details')
                             ->schema([
+                                Forms\Components\TextInput::make('title')
+                                    ->required()
+                                    ->label('Invoice Title')
+                                    ->maxLength(255),
                                 Forms\Components\Select::make('project_id')
                                     ->label('Project Name')
                                     ->required()
@@ -67,10 +73,19 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                                         }
                                     )
                                     ->reactive(),
-                                Forms\Components\TextInput::make('title')
+                                Forms\Components\Select::make('cPerson_id')
+                                    ->label('Contact Person')
                                     ->required()
-                                    ->label('Invoice Title')
-                                    ->maxLength(255),
+                                    ->options(function () {
+                                        $financeRole = Role::where('name', 'Finance')->first();
+
+                                        if ($financeRole) {
+                                            return User::role($financeRole->name)->pluck('name', 'id')->toArray();
+                                        }
+
+                                        // Return an empty array if the role doesn't exist
+                                        return [];
+                                    }),
                                 Forms\Components\Section::make('Price')
                                     ->schema([
                                         Forms\Components\TextInput::make('total')
@@ -123,6 +138,7 @@ class InvoiceResource extends Resource implements HasShieldPermissions
                 Forms\Components\Section::make('Items')
                     ->schema([
                         Repeater::make('invoice_details')
+                            ->label('')
                             ->relationship()
                             ->schema([
                                 Select::make('service_category_id')

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -54,5 +55,19 @@ class User extends Authenticatable
     {
         return LogOptions::defaults()
             ->logOnlyDirty();
+    }
+
+    public function getFinanceUsers()
+    {
+        // Retrieve the 'Finance' role
+        $financeRole = Role::where('name', 'Finance')->first();
+
+        if ($financeRole) {
+            // Get users with the 'Finance' role and pluck their names and IDs
+            return User::role($financeRole->name)->pluck('name', 'id')->toArray();
+        } else {
+            // Return an empty array if the role doesn't exist
+            return [];
+        }
     }
 }

@@ -14,6 +14,7 @@ class Invoice extends Model
     use HasFactory, LogsActivity;
     protected $fillable = [
         'project_id',
+        'cPerson_id',
         'title',
         'notes',
         'total',
@@ -31,6 +32,11 @@ class Invoice extends Model
     public function invoice_details(): HasMany
     {
         return $this->hasMany(InvoiceDetail::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -224,29 +224,9 @@
 
     <div class="notes">
         <strong>Note:</strong>
-        <ol>
-            <li>
-                This is an estimate only and may be subject to plus or minus
-                variations upon revisions attributed to client during final
-                production.
-            </li>
-            <li>
-                This estimate does not reflect subsequent revisions to colour
-                separations/film. Should revisions be required, they will be estimated
-                for on a supplementary revised estimate, as and when they occur.
-            </li>
-            <li>Maximum 3x Revision for Each SKU</li>
-            <li>Additional cost will be changed if there's Revision after FA.</li>
-            <li>Payment should be paid within 6 weeks after invoice.</li>
-            <li>
-                The payment should be transferred to:
-                <p>
-                    PT. Hantam Kreasi Utama<br />
-                    Bank MANDIRI - Cab. Mal Pondok Indah<br />
-                    Acc. No. 101-00-0677696-5
-                </p>
-            </li>
-        </ol>
+        <div style="line-height: 1.5; margin-bottom: 15px;">
+            {!! nl2br(e($invoiceNotes->content)) !!}
+        </div>
     </div>
 </body>
 

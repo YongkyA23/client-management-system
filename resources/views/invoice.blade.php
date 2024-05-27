@@ -210,7 +210,7 @@
                 <br>
                 <br>
                 <p>____________________</p>
-                <p>Diane</p>
+                <p>{{ $cPerson->name }}</p>
             </div>
             <div style="float: right; ">
                 <p>Client approval</p>
@@ -226,7 +226,7 @@
     <div class="notes">
         <strong>Note:</strong>
         <div style="line-height: 1.5; margin-bottom: 15px;">
-            {!! nl2br(e($invoice->notes)) !!}
+            {!! nl2br(e($invoiceNotes->content)) !!}
         </div>
     </div>
 </body>
