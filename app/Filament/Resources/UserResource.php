@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource implements HasShieldPermissions
 {
@@ -66,14 +67,15 @@ class UserResource extends Resource implements HasShieldPermissions
                 FileUpload::make('signature_image')
                     ->required()
                     ->image()
-                    ->getUploadedFileNameForStorageUsing(
-                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                            ->prepend('signature-'),
-                    )
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                    ])
+                    ->getUploadedFileNameForStorageUsing(function ($record, $file) {
+                        // Extract the name from the record (assuming it's available)
+                        $name = $record->name ?? '';
+
+                        // Generate a unique filename with slugified name and extension
+                        $filename = Str::slug($name) . '-signature-' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+                        return $filename;
+                    }),
             ]);
     }
 

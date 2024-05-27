@@ -7,7 +7,7 @@
         * {
             font-family: "Calibri", sans-serif;
             margin-top: 10px;
-            margin-bottom: 0px;
+
             font-size: 12px;
         }
 
@@ -21,10 +21,19 @@
         }
 
         th,
+        {
+        /* border: 1px solid #ddd; */
+        padding: 5px 5px 5px 8px;
+        text-align: left;
+        }
+
         td {
-            /* border: 1px solid #ddd; */
-            padding: 8px;
-            text-align: left;
+            padding-left: 8px;
+
+        }
+
+        .bottomInfo {
+            padding: 5px;
         }
 
         th {
@@ -48,6 +57,7 @@
         .notes {
             margin-top: 10px;
             font-size: smaller;
+
         }
 
         .notes ol {
@@ -56,11 +66,11 @@
 
         .project-details {
             display: grid;
-            /* Use grid layout for alignment */
+
             grid-template-columns: auto 1fr;
-            /* Two columns: labels and values */
+
             column-gap: 10px;
-            /* Add some space between columns */
+
             margin-bottom: 20px;
         }
 
@@ -150,7 +160,7 @@
             <tr>
                 <td colspan="4" style="font-weight: bold;"> {{ toRoman($loop->iteration) }}.
                     {{ strtoupper($categoryName) }}</td>
-                <td colspan="4" style="font-weight: bold; text-align: right;">
+                <td colspan="4" style="font-weight: bold; text-align: right; padding-right:5px;">
                     @php
                         foreach ($details as $detail) {
                             $categoryTotal += $detail->total_price;
@@ -162,19 +172,22 @@
             </tr>
             @foreach ($details as $detail)
                 <tr style="font-style: italic;">
-                    <td style="padding-left: 30px;">- {{ $detail->name }}</td>
-                    <td style="text-align: center;">{{ $detail->quantity }}</td>
-                    <td style="text-align: right;">{{ number_format($detail->price, 0, '.', ',') }}</td>
-                    <td style="text-align: right;">{{ number_format($detail->total_price, 0, '.', ',') }}</td>
+                    <td style="padding-left: 25px;">- {{ $detail->name }}</td>
+                    <td style="text-align: center; ">{{ $detail->quantity }}</td>
+                    <td style="text-align: right; padding-right:5px;">{{ number_format($detail->price, 0, '.', ',') }}
+                    </td>
+                    <td style="text-align: right; padding-right:5px;">
+                        {{ number_format($detail->total_price, 0, '.', ',') }}</td>
                 </tr>
             @endforeach
         @endforeach
 
 
-        <tr class="bg-grey">
-            <td colspan="4"><strong>Sub. Total</strong></td>
 
-            <td style="font-weight: bold; text-align: right;">
+        <tr class="bg-grey">
+            <td colspan="4" class="bottomInfo"><strong>Sub. Total</strong></td>
+
+            <td style="font-weight: bold; text-align: right; padding-right:5px;">
                 {{ number_format($grandTotal, 0, '.', ',') }}
             </td>
         </tr>
@@ -182,20 +195,20 @@
             $tax = ($grandTotal * $invoice->tax_percent) / 100;
         @endphp
         <tr>
-            <td><strong>VAT {{ $invoice->tax_percent }}% on above</strong></td>
+            <td class="bottomInfo"><strong>VAT {{ $invoice->tax_percent }}% on above</strong></td>
             <td></td>
             <td></td>
             <td></td>
-            <td style="font-weight: bold; text-align: right;">
+            <td style="font-weight: bold; text-align: right; padding-right:5px;">
                 {{ number_format($tax, 0, '.', ',') }}
             </td>
         </tr>
-        <tr class="bg-grey">
-            <td><strong>GRAND TOTAL</strong></td>
+        <tr>
+            <td class="bottomInfo"><strong>GRAND TOTAL</strong></td>
             <td></td>
             <td></td>
             <td></td>
-            <td style="font-weight: bold; text-align: right;">
+            <td style="font-weight: bold; text-align: right; padding-right:5px;">
                 {{ number_format($invoice->total, 0, '.', ',') }}
             </td>
         </tr>
@@ -206,13 +219,15 @@
         <div class="signature">
             <div style="float: left; width: 48%; margin-right: 4%">
                 <p>Prepared by</p>
-                <br>
-                <br>
+                <img src="{{ 'storage/' . $cPerson->signature_image }}" alt="Signature" style="width:120px;"" />
                 <p>____________________</p>
-                <p>Diane</p>
+                <p>{{ $cPerson->name }}</p>
             </div>
-            <div style="float: right; ">
-                <p>Client approval</p>
+            <div style="float:
+                    right; ">
+                <p style="margin-bottom:15px;">Client approval</p>
+                <br>
+                <br>
                 <br>
                 <br>
                 <p>____________________</p>
@@ -222,10 +237,22 @@
         </div>
     </div>
 
+    @php
+        try {
+            $content = nl2br(e($invoiceNotes->content));
+        } catch (Exception $e) {
+            $content = 'An error occurred while processing the content.';
+            // Optionally, log the error for debugging purposes
+            \Log::error('Error processing invoice notes content: ' . $e->getMessage());
+        }
+    @endphp
+
+
     <div class="notes">
         <strong>Note:</strong>
+
         <div style="line-height: 1.5; margin-bottom: 15px;">
-            {!! nl2br(e($invoiceNotes->content)) !!}
+            {!! $content !!}
         </div>
     </div>
 </body>
