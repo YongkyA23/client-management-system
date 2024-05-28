@@ -7,33 +7,29 @@
         * {
             font-family: "Calibri", sans-serif;
             margin-top: 10px;
-
             font-size: 12px;
         }
 
-        table {
+        .mainTable {
             width: 100%;
             border-collapse: collapse;
         }
 
         .title {
-            text-decoration: underline
+            text-decoration: underline;
         }
 
-        th,
-        {
-        /* border: 1px solid #ddd; */
-        padding: 5px 5px 5px 8px;
-        text-align: left;
+        th {
+            padding: 5px 5px 5px 8px;
+            text-align: left;
         }
 
-        td {
+        td .mainTable {
             padding-left: 8px;
-
         }
 
         .bottomInfo {
-            padding: 8px;
+            padding: 5px 5px 5px 0px;
         }
 
         th {
@@ -44,20 +40,12 @@
             background-color: #f2f2f2;
         }
 
-
-
         .logo {
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: -1;
-            text-align: right;
+            text-align: left;
         }
 
         .notes {
-            margin-top: 10px;
             font-size: smaller;
-
         }
 
         .notes ol {
@@ -66,49 +54,133 @@
 
         .project-details {
             display: grid;
-
             grid-template-columns: auto 1fr;
-
             column-gap: 10px;
-
             margin-bottom: 20px;
         }
 
         .project-details strong {
-            /* Style the labels (bold) */
             text-align: left;
-            /* Align labels to the right */
         }
 
-        .signature {
-            margin-top: 0px;
+        .approval {
+            width: 100%;
+            margin-top: 20px;
+            page-break-inside: avoid;
         }
 
         .approval h3 {
+            background-color: #f2f2f2;
             text-align: center;
-            padding: 5px 0 5px 0;
+        }
 
+        .signature-table {
+            width: 100%;
+            margin-top: 10px;
+            table-layout: fixed;
+        }
+
+        .signature-table td {
+            padding: 0px;
+            vertical-align: top;
+        }
+
+        .signature-table td:first-child {
+            text-align: left;
+        }
+
+        .signature-table td:last-child {
+            text-align: left;
+            padding-left: 210px;
+        }
+
+        .signature-table img {
+            width: 100px;
+            height: 40px;
+        }
+
+        .signature-table p {
+            margin: 5px 0;
+        }
+
+        .signature-section {
+            text-align: left;
+        }
+
+        .signature-space {
+            width: 100px;
+            height: 50px;
+        }
+
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .header-info {
+            text-align: right;
+        }
+
+        .company-info,
+        .client-info {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body>
-    <div class="logo">
-        <img src="images/logo.png" alt="Company Logo" width="150" />
-    </div>
+    <table class="header-table">
+        <tr>
+            <td class="logo">
+                <img src="images/logo.png" alt="Company Logo" width="150" />
+            </td>
+            <td class="header-info">
+                <h4 class="title">Invoice</h4>
+                <p>Referensi: {{ $invoice->id }}</p>
+                <p>Tanggal: {{ $invoice->issue_date }}</p>
+                <p>Tgl. Jatuh Tempo: {{ $invoice->due_date }}</p>
+                <p>No. NPWP: 123456</p>
+                <p>Status: Unpaid</p>
+            </td>
+        </tr>
+    </table>
 
-    <h4 class="title">INVOICE</h4>
+    <table class="header-table">
+        <tr>
+            <td class="company-info">
+                <h4>Info Perusahaan</h4>
+                <p>PT Multi Jaya Abadi</p>
+                <p>Alamat: Jl. ini aja dulu No.12</p>
+                <p>Jakarta Utara</p>
+                <p>DKI Jakarta 10450</p>
+                <p>Indonesia</p>
+                <p>Telp: 08112288833</p>
+                <p>Email: solusi_finansial@gmail.com</p>
+            </td>
+            <td class="client-info">
+                <h4>Tagihan Untuk</h4>
+                <p>Abdul Simalakama</p>
+                <p>UP: Anugrah Royan</p>
+                <p>Alamat: Jl. Merpati Raya</p>
+                <p>Jakarta Utara</p>
+                <p>DKI Jakarta 10450</p>
+                <p>Indonesia</p>
+                <p>Telp: 085974964088</p>
+                <p>Email: abdul08@gmail.com</p>
+            </td>
+        </tr>
+    </table>
 
     <div class="project-details">
-        <strong>Nbr.</strong> : {{ $invoice->id }}<br />
-        <strong>Date</strong> : {{ $invoice->issue_date }}<br />
-        <strong>Client</strong> : {{ $invoice->project->client->name }}<br />
-        <strong>Brand</strong> : {{ $invoice->project->client->name }}<br />
         <div class="proj-title">
             <strong>Project</strong> : {{ $invoice->project->name }}
         </div>
     </div>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table class="mainTable" style="width: 100%; border-collapse: collapse;">
         <tr>
             <th>Agency Cost</th>
             <th style="text-align: center;">Qty</th>
@@ -182,8 +254,6 @@
             @endforeach
         @endforeach
 
-
-
         <tr class="bg-grey">
             <td colspan="4" class="bottomInfo"><strong>Sub. Total</strong></td>
 
@@ -216,25 +286,22 @@
 
     <div class="approval">
         <h3 class="bg-grey">APPROVAL</h3>
-        <div class="signature">
-            <div style="float: left; width: 48%; margin-right: 4%">
-                <p>Prepared by</p>
-                <img src="{{ 'storage/' . $cPerson->signature_image }}" alt="Signature" style="width:120px;"" />
-                <p>____________________</p>
-                <p>{{ $cPerson->name }}</p>
-            </div>
-            <div style="float:
-                    right; ">
-                <p style="margin-bottom:15px;">Client approval</p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <p>____________________</p>
-                <p>Client/</p>
-            </div>
-            <div style="clear: both"></div>
-        </div>
+        <table class="signature-table">
+            <tr>
+                <td>
+                    <p class="signature-section">Prepared by</p>
+                    <img src="{{ 'storage/' . $cPerson->signature_image }}" alt="Signature" />
+                    <p class="signature-section">____________________</p>
+                    <p class="signature-section">{{ $cPerson->name }}</p>
+                </td>
+                <td>
+                    <p class="signature-section">Client approval</p>
+                    <div class="signature-space"></div>
+                    <p class="signature-section">____________________</p>
+                    <p class="signature-section">Client/</p>
+                </td>
+            </tr>
+        </table>
     </div>
 
     @php
@@ -242,15 +309,12 @@
             $content = nl2br(e($invoiceNotes->content));
         } catch (Exception $e) {
             $content = 'An error occurred while processing the content.';
-            // Optionally, log the error for debugging purposes
             \Log::error('Error processing invoice notes content: ' . $e->getMessage());
         }
     @endphp
 
-
     <div class="notes">
         <strong>Note:</strong>
-
         <div style="line-height: 1.5; margin-bottom: 15px;">
             {!! $content !!}
         </div>

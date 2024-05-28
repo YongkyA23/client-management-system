@@ -7,7 +7,7 @@
         * {
             font-family: "Calibri", sans-serif;
             margin-top: 10px;
-
+            /* margin-bottom: 20px; */
             font-size: 12px;
         }
 
@@ -33,7 +33,7 @@
         }
 
         .bottomInfo {
-            padding: 8px;
+            padding: 5px 5px 5px 8px;
         }
 
         th {
@@ -55,7 +55,7 @@
         }
 
         .notes {
-            margin-top: 10px;
+
             font-size: smaller;
 
         }
@@ -66,11 +66,8 @@
 
         .project-details {
             display: grid;
-
             grid-template-columns: auto 1fr;
-
             column-gap: 10px;
-
             margin-bottom: 20px;
         }
 
@@ -82,6 +79,7 @@
 
         .signature {
             margin-top: 0px;
+            margin-bottom: -70px;
         }
 
         .approval h3 {
@@ -219,17 +217,15 @@
         <div class="signature">
             <div style="float: left; width: 48%; margin-right: 4%">
                 <p>Prepared by</p>
-                <img src="{{ 'storage/' . $cPerson->signature_image }}" alt="Signature" style="width:120px;"" />
+                <img src="{{ 'storage/' . $cPerson->signature_image }}" alt="Signature"
+                    style="width:100px; height:40px; " />
                 <p>____________________</p>
                 <p>{{ $cPerson->name }}</p>
             </div>
             <div style="float:
                     right; ">
-                <p style="margin-bottom:15px;">Client approval</p>
-                <br>
-                <br>
-                <br>
-                <br>
+                <p>Client approval</p>
+                <div style="width:100px; height:57px;"></div>
                 <p>____________________</p>
                 <p>Client/</p>
             </div>
@@ -250,7 +246,6 @@
 
     <div class="notes">
         <strong>Note:</strong>
-
         <div style="line-height: 1.5; margin-bottom: 15px;">
             {!! $content !!}
         </div>
